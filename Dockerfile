@@ -13,6 +13,8 @@ RUN apt-get update -y && apt-get install -y                        \
     libfftw3-dev                                                   \
     libzmq3-dev                                                    \
     libpcre3-dev                                                   \
+    libpcap-dev                                                    \
+    libz-dev                                                       \
     python3                                                        \
     python3-dev                                                    \
     python3-numpy                                                  \
@@ -57,9 +59,9 @@ RUN mkdir /build &&                                                \
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
-    wget http://geant4.cern.ch/support/source/geant4.10.02.p01.tar.gz && \
-    tar zxf geant4.10.02.p01.tar.gz &&                             \
-    cd geant4.10.02.p01 &&                                         \
+    wget http://geant4.cern.ch/support/source/geant4.10.02.p02.tar.gz && \
+    tar zxf geant4.10.02.p02.tar.gz &&                             \
+    cd geant4.10.02.p02 &&                                         \
     mkdir mybuild &&                                               \
     cd mybuild &&                                                  \
     cmake -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DGEANT4_INSTALL_DATA=ON .. && \
@@ -67,3 +69,5 @@ RUN mkdir /build &&                                                \
     make install > /dev/null &&                                    \
     cd / &&                                                        \
     rm -rf /build
+
+ADD build_cameras_to_actl.sh /build/
