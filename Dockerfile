@@ -2,22 +2,22 @@ FROM ubuntu:16.04
 
 MAINTAINER sfegan@llr.in2p3.fr
 
-RUN apt-get update -y && apt-get install -y \
-    gcc-5              \
-    g++-5              \
-    make               \
-    git                \
-    wget               \
-    gsl-bin            \
-    libgsl0-dev        \
-    libfftw3-dev       \
-    libzmq3-dev        \
-    libpcre3-dev       \
-    python3            \
-    python3-dev        \
-    python3-numpy      \
-    ipython3           \
-    ipython3-notebook  \
+RUN apt-get update -y && apt-get install -y                        \
+    gcc-5                                                          \
+    g++-5                                                          \
+    make                                                           \
+    git                                                            \
+    wget                                                           \
+    gsl-bin                                                        \
+    libgsl0-dev                                                    \
+    libfftw3-dev                                                   \
+    libzmq3-dev                                                    \
+    libpcre3-dev                                                   \
+    python3                                                        \
+    python3-dev                                                    \
+    python3-numpy                                                  \
+    ipython3                                                       \
+    ipython3-notebook                                              \
     fftw3
 
 ENV CC=gcc-5 CXX=g++-5
@@ -50,6 +50,19 @@ RUN mkdir /build &&                                                \
     tar zxf protobuf-cpp-3.0.0.tar.gz &&                           \
     cd protobuf-3.0.0 &&                                           \
     ./configure --prefix=/usr &&                                   \
+    make -j2 &&                                                    \
+    make install > /dev/null &&                                    \
+    cd / &&                                                        \
+    rm -rf /build
+
+RUN mkdir /build &&                                                \
+    cd /build &&                                                   \
+    wget http://geant4.cern.ch/support/source/geant4.10.02.p01.tar.gz && \
+    tar zxf geant4.10.02.p01.tar.gz &&                             \
+    cd geant4.10.02.p01 &&                                         \
+    mkdir mybuild &&                                               \
+    cd mybuild &&                                                  \
+    cmake -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DGEANT4_INSTALL_DATA=ON .. && \
     make -j2 &&                                                    \
     make install > /dev/null &&                                    \
     cd / &&                                                        \
