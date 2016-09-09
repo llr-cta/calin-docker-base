@@ -76,5 +76,10 @@ RUN ipython3 profile create default
 
 ADD ipython_notebook_config.py /root/.ipython/profile_default/
 
+RUN apt-get update -y && apt-get install -y                        \
+    python3-matplotlib                                             \
+    sqlite3                                                        \
+    libsqlite3-dev
+
 # Now build CamerasToACTL manually with :
 #   docker run -t -i 0123456789ab /bin/bash /build/build_cameras_to_actl.sh
