@@ -71,3 +71,10 @@ RUN mkdir /build &&                                                \
     rm -rf /build
 
 ADD build_cameras_to_actl.sh /build/
+
+RUN ipython3 profile create default
+
+ADD ipython_notebook_config.py /root/.ipython/profile_default/
+
+# Now build CamerasToACTL manually with :
+#   docker run -t -i 0123456789ab /bin/bash /build/build_cameras_to_actl.sh
