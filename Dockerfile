@@ -72,14 +72,22 @@ RUN mkdir /build &&                                                \
 
 ADD build_cameras_to_actl.sh /build/
 
-RUN ipython3 profile create default
-
-ADD ipython_notebook_config.py /root/.ipython/profile_default/
-
 RUN apt-get update -y && apt-get install -y                        \
     python3-matplotlib                                             \
     sqlite3                                                        \
-    libsqlite3-dev
+    libsqlite3-dev                                                 \
+    python3-pip &&                                                 \
+    pip3 install --upgrade pip &&                                  \
+    pip3 install jupyter
+
+RUN ipython3 profile create default &&                             \
+    jupyter notebook --generate-config
+
+ADD ipython_notebook_config.py /root/.ipython/profile_default/
+ADD ipython_kernel_config.py /root/.ipython/profile_default/
+ADD jupyter_notebook_config.py  /root/.jupyter/
+
+RUN echo %pylab | ipython3
 
 # Now build CamerasToACTL manually with :
 #   docker run -t -i 0123456789ab /bin/bash /build/build_cameras_to_actl.sh
