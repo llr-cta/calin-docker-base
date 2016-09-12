@@ -87,7 +87,8 @@ ADD ipython_notebook_config.py /root/.ipython/profile_default/
 ADD ipython_kernel_config.py /root/.ipython/profile_default/
 ADD jupyter_notebook_config.py  /root/.jupyter/
 
+# Pre-run annoying step to build font cache
 RUN echo %pylab | ipython3
 
 # Now build CamerasToACTL manually with :
-#   docker run -t -i 0123456789ab /bin/bash /build/build_cameras_to_actl.sh
+#   docker run -t -i xxxxxxxxxxxx /bin/bash /build/build_cameras_to_actl.sh
