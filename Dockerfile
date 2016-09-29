@@ -20,15 +20,18 @@ RUN apt-get update -y && apt-get install -y                        \
     python3-numpy                                                  \
     ipython3                                                       \
     ipython3-notebook                                              \
-    fftw3
+    fftw3                                                          \
+    python3-matplotlib                                             \
+    sqlite3                                                        \
+    libsqlite3-dev
 
 ENV CC=gcc-5 CXX=g++-5
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
-    wget --no-check-certificate https://cmake.org/files/v3.5/cmake-3.5.2.tar.gz && \
-    tar zxf cmake-3.5.2.tar.gz &&                                  \
-    cd cmake-3.5.2 &&                                              \
+    wget --no-check-certificate https://cmake.org/files/v3.6/cmake-3.6.2.tar.gz && \
+    tar zxf cmake-3.6.2.tar.gz &&                                  \
+    cd cmake-3.6.2 &&                                              \
     ./bootstrap  --parallel=2 --prefix=/usr &&                     \
     make -j2 &&                                                    \
     make install > /dev/null &&                                    \
@@ -48,9 +51,9 @@ RUN mkdir /build &&                                                \
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
-    wget https://github.com/google/protobuf/releases/download/v3.0.0/protobuf-cpp-3.0.0.tar.gz && \
-    tar zxf protobuf-cpp-3.0.0.tar.gz &&                           \
-    cd protobuf-3.0.0 &&                                           \
+    wget https://github.com/google/protobuf/releases/download/v3.0.0/protobuf-cpp-3.1.0.tar.gz && \
+    tar zxf protobuf-cpp-3.1.0.tar.gz &&                           \
+    cd protobuf-3.1.0 &&                                           \
     ./configure --prefix=/usr &&                                   \
     make -j2 &&                                                    \
     make install > /dev/null &&                                    \
@@ -73,9 +76,6 @@ RUN mkdir /build &&                                                \
 ADD build_cameras_to_actl.sh /build/
 
 RUN apt-get update -y && apt-get install -y                        \
-    python3-matplotlib                                             \
-    sqlite3                                                        \
-    libsqlite3-dev                                                 \
     python3-pip &&                                                 \
     pip3 install --upgrade pip &&                                  \
     pip3 install jupyter
