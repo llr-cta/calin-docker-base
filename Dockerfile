@@ -51,7 +51,7 @@ RUN mkdir /build &&                                                \
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
-    wget https://github.com/google/protobuf/releases/download/v3.0.0/protobuf-cpp-3.1.0.tar.gz && \
+    wget https://github.com/google/protobuf/releases/download/v3.1.0/protobuf-cpp-3.1.0.tar.gz && \
     tar zxf protobuf-cpp-3.1.0.tar.gz &&                           \
     cd protobuf-3.1.0 &&                                           \
     ./configure --prefix=/usr &&                                   \
