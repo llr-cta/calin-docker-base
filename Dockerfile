@@ -76,6 +76,7 @@ RUN mkdir /build &&                                                \
 ADD build_cameras_to_actl.sh /build/
 
 RUN apt-get update -y && apt-get install -y                        \
+    python3-scipy                                                  \
     python3-pip &&                                                 \
     pip3 install --upgrade pip &&                                  \
     pip3 install jupyter
