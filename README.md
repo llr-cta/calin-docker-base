@@ -16,8 +16,6 @@ Base for calin docker images including:
 
 To download the latest image directly do:
 
-```docker pull llrcta/calin-docker-base:latest```
+  ```$ docker pull llrcta/calin-docker-base:latest```
 
-The docker hub page for this image is:
-
-https://hub.docker.com/r/llrcta/calin-docker-base/
+The docker hub page for this image is: https://hub.docker.com/r/llrcta/calin-docker-base/
