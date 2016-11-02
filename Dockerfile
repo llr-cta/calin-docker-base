@@ -82,7 +82,8 @@ RUN apt-get update -y && apt-get install -y                        \
     pip3 install jupyter
 
 RUN ipython3 profile create default &&                             \
-    jupyter notebook --generate-config
+    jupyter notebook --generate-config &&                          \
+    jupyter nbextension enable --py --sys-prefix widgetsnbextension
 
 ADD ipython_notebook_config.py /root/.ipython/profile_default/
 ADD ipython_kernel_config.py /root/.ipython/profile_default/
