@@ -92,5 +92,18 @@ ADD jupyter_notebook_config.py  /root/.jupyter/
 # Pre-run annoying step to build font cache
 RUN echo %pylab | ipython3
 
+# Add Geant 4 environment variables
+ENV G4DATADIR=/usr/share/Geant4-10.2.2/data
+ENV G4NEUTRONHPDATA=$G4DATADIR/G4ABLA3.0                           \
+    G4LEDATA=$G4DATADIR/G4EMLOW6.48                                \
+    G4LEVELGAMMADATA=$G4DATADIR/PhotonEvaporation3.2               \
+    G4RADIOACTIVEDATA=$G4DATADIR/RadioactiveDecay4.3.2             \
+    G4NEUTRONXSDATA=$G4DATADIR/G4NEUTRONXS1.4                      \
+    G4PIIDATA=$G4DATADIR/G4PII1.3                                  \
+    G4REALSURFACEDATA=$G4DATADIR/RealSurface1.0                    \
+    G4SAIDXSDATA=$G4DATADIR/G4SAIDDATA1.1                          \
+    G4ABLADATA=$G4DATADIR/G4ABLA3.0                                \
+    G4ENSDFSTATEDATA=$G4DATADIR/G4ENSDFSTATE1.2.3
+
 # Now build CamerasToACTL manually with :
 #   docker run -t -i xxxxxxxxxxxx /bin/bash /build/build_cameras_to_actl.sh
