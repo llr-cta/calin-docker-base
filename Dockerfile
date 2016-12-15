@@ -29,9 +29,9 @@ ENV CC=gcc-5 CXX=g++-5
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
-    wget --no-check-certificate https://cmake.org/files/v3.6/cmake-3.6.2.tar.gz && \
-    tar zxf cmake-3.6.2.tar.gz &&                                  \
-    cd cmake-3.6.2 &&                                              \
+    wget --no-check-certificate https://cmake.org/files/v3.7/cmake-3.7.1.tar.gz && \
+    tar zxf cmake-3.7.1.tar.gz &&                                  \
+    cd cmake-3.7.1 &&                                              \
     ./bootstrap  --parallel=2 --prefix=/usr &&                     \
     make -j2 &&                                                    \
     make install > /dev/null &&                                    \
@@ -62,9 +62,9 @@ RUN mkdir /build &&                                                \
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
-    wget http://geant4.cern.ch/support/source/geant4.10.02.p02.tar.gz && \
-    tar zxf geant4.10.02.p02.tar.gz &&                             \
-    cd geant4.10.02.p02 &&                                         \
+    wget http://geant4.cern.ch/support/source/geant4.10.03.tar.gz && \
+    tar zxf geant4.10.03.tar.gz &&                             \
+    cd geant4.10.03 &&                                         \
     mkdir mybuild &&                                               \
     cd mybuild &&                                                  \
     cmake -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DGEANT4_INSTALL_DATA=ON .. && \
@@ -93,17 +93,17 @@ ADD jupyter_notebook_config.py  /root/.jupyter/
 RUN echo %pylab | ipython3
 
 # Add Geant 4 environment variables
-ENV G4DATADIR=/usr/share/Geant4-10.2.2/data
+ENV G4DATADIR=/usr/share/Geant4-10.3/data
 ENV G4NEUTRONHPDATA=$G4DATADIR/G4ABLA3.0                           \
-    G4LEDATA=$G4DATADIR/G4EMLOW6.48                                \
-    G4LEVELGAMMADATA=$G4DATADIR/PhotonEvaporation3.2               \
-    G4RADIOACTIVEDATA=$G4DATADIR/RadioactiveDecay4.3.2             \
+    G4LEDATA=$G4DATADIR/G4EMLOW6.50                                \
+    G4LEVELGAMMADATA=$G4DATADIR/PhotonEvaporation4.3               \
+    G4RADIOACTIVEDATA=$G4DATADIR/RadioactiveDecay5.1               \
     G4NEUTRONXSDATA=$G4DATADIR/G4NEUTRONXS1.4                      \
     G4PIIDATA=$G4DATADIR/G4PII1.3                                  \
     G4REALSURFACEDATA=$G4DATADIR/RealSurface1.0                    \
     G4SAIDXSDATA=$G4DATADIR/G4SAIDDATA1.1                          \
     G4ABLADATA=$G4DATADIR/G4ABLA3.0                                \
-    G4ENSDFSTATEDATA=$G4DATADIR/G4ENSDFSTATE1.2.3
+    G4ENSDFSTATEDATA=$G4DATADIR/G4ENSDFSTATE2.1
 
 # Now build CamerasToACTL manually with :
 #   docker run -t -i xxxxxxxxxxxx /bin/bash /build/build_cameras_to_actl.sh
