@@ -93,7 +93,7 @@ RUN mkdir /build &&                                                \
 ADD build_cameras_to_actl.sh /build/
 
 # Add Geant 4 environment variables
-ENV G4DATADIR=/usr/share/Geant4-10.3/data
+ENV G4DATADIR=/usr/share/Geant4-10.3.0/data
 ENV G4NEUTRONHPDATA=$G4DATADIR/G4ABLA3.0                           \
     G4LEDATA=$G4DATADIR/G4EMLOW6.50                                \
     G4LEVELGAMMADATA=$G4DATADIR/PhotonEvaporation4.3               \
