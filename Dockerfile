@@ -18,14 +18,31 @@ RUN apt-get update -y && apt-get install -y                        \
     python3                                                        \
     python3-dev                                                    \
     python3-numpy                                                  \
-    ipython3                                                       \
-    ipython3-notebook                                              \
+    python3-scipy                                                  \
+    python3-pip                                                    \
     fftw3                                                          \
     python3-matplotlib                                             \
     sqlite3                                                        \
     libsqlite3-dev
 
 ENV CC=gcc-5 CXX=g++-5
+
+RUN pip3 install --upgrade pip &&                                  \
+    pip3 install jupyter
+
+RUN ipython3 profile create default &&                             \
+    jupyter notebook --generate-config &&                          \
+    jupyter nbextension enable --py --sys-prefix widgetsnbextension && \
+    sed -i -e '/c.NotebookApp.ip/s/^#//'                          \
+           -e '/c.NotebookApp.ip/s/localhost/*/'                 \
+           -e '/c.NotebookApp.open_browser/s/^#//'                \
+           -e '/c.NotebookApp.open_browser/s/True/False/'         \
+           -e '/c.NotebookApp.ip/s/localhost/*/'                 \
+           -e '/c.NotebookApp.token/s/^#//'                       \
+       /root/.jupyter/jupyter_notebook_config.py
+
+# Pre-run annoying step to build font cache
+RUN echo %pylab | ipython3
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
@@ -74,23 +91,6 @@ RUN mkdir /build &&                                                \
     rm -rf /build
 
 ADD build_cameras_to_actl.sh /build/
-
-RUN apt-get update -y && apt-get install -y                        \
-    python3-scipy                                                  \
-    python3-pip &&                                                 \
-    pip3 install --upgrade pip &&                                  \
-    pip3 install jupyter
-
-RUN ipython3 profile create default &&                             \
-    jupyter notebook --generate-config &&                          \
-    jupyter nbextension enable --py --sys-prefix widgetsnbextension
-
-ADD ipython_notebook_config.py /root/.ipython/profile_default/
-ADD ipython_kernel_config.py /root/.ipython/profile_default/
-ADD jupyter_notebook_config.py  /root/.jupyter/
-
-# Pre-run annoying step to build font cache
-RUN echo %pylab | ipython3
 
 # Add Geant 4 environment variables
 ENV G4DATADIR=/usr/share/Geant4-10.3/data
