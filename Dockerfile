@@ -33,12 +33,12 @@ RUN pip3 install --upgrade pip &&                                  \
 RUN ipython3 profile create default &&                             \
     jupyter notebook --generate-config &&                          \
     jupyter nbextension enable --py --sys-prefix widgetsnbextension && \
-    sed -i -e '/c.NotebookApp.ip/s/^#//'                          \
-           -e '/c.NotebookApp.ip/s/localhost/*/'                 \
-           -e '/c.NotebookApp.open_browser/s/^#//'                \
-           -e '/c.NotebookApp.open_browser/s/True/False/'         \
-           -e '/c.NotebookApp.ip/s/localhost/*/'                 \
-           -e '/c.NotebookApp.token/s/^#//'                       \
+    sed -i -e '/c.NotebookApp.ip/s/^#//'                           \
+           -e '/c.NotebookApp.ip/s/localhost/*/'                   \
+           -e '/c.NotebookApp.open_browser/s/^#//'                 \
+           -e '/c.NotebookApp.open_browser/s/True/False/'          \
+           -e '/c.NotebookApp.ip/s/localhost/*/'                   \
+           -e '/c.NotebookApp.token/s/^#//'                        \
        /root/.jupyter/jupyter_notebook_config.py
 
 # Pre-run annoying step to build font cache
@@ -80,8 +80,8 @@ RUN mkdir /build &&                                                \
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
     wget http://geant4.cern.ch/support/source/geant4.10.03.tar.gz && \
-    tar zxf geant4.10.03.tar.gz &&                             \
-    cd geant4.10.03 &&                                         \
+    tar zxf geant4.10.03.tar.gz &&                                 \
+    cd geant4.10.03 &&                                             \
     mkdir mybuild &&                                               \
     cd mybuild &&                                                  \
     cmake -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DGEANT4_INSTALL_DATA=ON .. && \
