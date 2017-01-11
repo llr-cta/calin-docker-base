@@ -1,29 +1,55 @@
+# calin-docker-base - Build base filesystem for calin on Docker, including
+#                     all required libraries and configuration files.
+#
+# Stephen Fegan - sfegan@gmail.com - 2017-01-10
+#
+# This program is motivated by the author's experience of SMSBackup+ under
+# Android, an excellent application to backup SMS/MMS messages to GMail where
+# they can be searched etc. This little program tries to do the same thing for
+# messages / conversations stored in the iMessage database.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Build version : ubuntu16.04_v1.10
+
 FROM ubuntu:16.04
 
 MAINTAINER sfegan@llr.in2p3.fr
 
 RUN apt-get update -y && apt-get install -y                        \
-    gcc-5                                                          \
-    g++-5                                                          \
-    make                                                           \
-    git                                                            \
-    wget                                                           \
-    gsl-bin                                                        \
-    libgsl0-dev                                                    \
-    libfftw3-dev                                                   \
-    libzmq3-dev                                                    \
-    libpcre3-dev                                                   \
-    libpcap-dev                                                    \
-    libz-dev                                                       \
-    python3                                                        \
-    python3-dev                                                    \
-    python3-numpy                                                  \
-    python3-scipy                                                  \
-    python3-pip                                                    \
-    fftw3                                                          \
-    python3-matplotlib                                             \
-    sqlite3                                                        \
-    libsqlite3-dev
+        gcc-5                                                      \
+        g++-5                                                      \
+        make                                                       \
+        git                                                        \
+        wget                                                       \
+        gsl-bin                                                    \
+        libgsl0-dev                                                \
+        libfftw3-dev                                               \
+        libzmq3-dev                                                \
+        libpcre3-dev                                               \
+        libpcap-dev                                                \
+        libz-dev                                                   \
+        python3                                                    \
+        python3-dev                                                \
+        python3-numpy                                              \
+        python3-scipy                                              \
+        python3-pip                                                \
+        python3-matplotlib                                         \
+        fftw3                                                      \
+        libchealpix-dev                                            \
+        sqlite3                                                    \
+        libsqlite3-dev
 
 ENV CC=gcc-5 CXX=g++-5
 
@@ -57,9 +83,9 @@ RUN mkdir /build &&                                                \
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
-    wget https://sourceforge.net/projects/swig/files/swig/swig-3.0.10/swig-3.0.10.tar.gz && \
-    tar zxf swig-3.0.10.tar.gz &&                                  \
-    cd swig-3.0.10 &&                                              \
+    wget https://sourceforge.net/projects/swig/files/swig/swig-3.0.11/swig-3.0.11.tar.gz && \
+    tar zxf swig-3.0.11.tar.gz &&                                  \
+    cd swig-3.0.11 &&                                              \
     ./configure --prefix=/usr --without-alllang --with-python &&   \
     make -j2 &&                                                    \
     make install > /dev/null &&                                    \
