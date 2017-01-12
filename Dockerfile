@@ -55,17 +55,6 @@ ENV CC=gcc-5 CXX=g++-5
 RUN pip3 install --upgrade pip &&                                  \
     pip3 install jupyter
 
-RUN ipython3 profile create default &&                             \
-    jupyter notebook --generate-config &&                          \
-    jupyter nbextension enable --py --sys-prefix widgetsnbextension && \
-    sed -i -e '/c.NotebookApp.ip/s/^#//'                           \
-           -e '/c.NotebookApp.ip/s/localhost/*/'                   \
-           -e '/c.NotebookApp.open_browser/s/^#//'                 \
-           -e '/c.NotebookApp.open_browser/s/True/False/'          \
-           -e '/c.NotebookApp.ip/s/localhost/*/'                   \
-           -e '/c.NotebookApp.token/s/^#//'                        \
-       /root/.jupyter/jupyter_notebook_config.py
-
 # Pre-run annoying step to build font cache
 RUN echo %pylab | ipython3
 
@@ -117,6 +106,18 @@ RUN mkdir /build &&                                                \
 
 ADD build_cameras_to_actl.sh /build/
 
+RUN ipython3 profile create default &&                             \
+    jupyter notebook --generate-config &&                          \
+    jupyter nbextension enable --py --sys-prefix widgetsnbextension && \
+    sed -i -e '/c.NotebookApp.ip/s/^#//'                           \
+           -e '/c.NotebookApp.ip/s/localhost/*/'                   \
+           -e '/c.NotebookApp.open_browser/s/^#//'                 \
+           -e '/c.NotebookApp.open_browser/s/True/False/'          \
+           -e '/c.NotebookApp.ip/s/localhost/*/'                   \
+           -e '/c.NotebookApp.token/s/^#//'                        \
+           -e '/c.NotebookApp.token/s/<generated>//'               \
+       /root/.jupyter/jupyter_notebook_config.py
+
 # Add Geant 4 environment variables
 ENV G4DATADIR=/usr/share/Geant4-10.3.0/data
 ENV G4NEUTRONHPDATA=$G4DATADIR/G4ABLA3.0                           \
@@ -132,3 +133,5 @@ ENV G4NEUTRONHPDATA=$G4DATADIR/G4ABLA3.0                           \
 
 # Now build CamerasToACTL manually with :
 #   docker run -t -i xxxxxxxxxxxx /bin/bash /build/build_cameras_to_actl.sh
+
+CMD ["/bin/bash"]
