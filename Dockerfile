@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Build version : ubuntu16.04_v1.13
+# Build version : ubuntu16.04_v1.14
 
 FROM ubuntu:16.04
 
@@ -43,7 +43,8 @@ RUN apt-get update -y && apt-get install -y                        \
         python3-matplotlib                                         \
         fftw3                                                      \
         sqlite3                                                    \
-        libsqlite3-dev
+        libsqlite3-dev                                             \
+        libxerces-c-dev
 
 ENV CC=gcc-5 CXX=g++-5
 
@@ -55,9 +56,9 @@ RUN echo %pylab | ipython3
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
-    wget --no-check-certificate https://cmake.org/files/v3.8/cmake-3.8.0.tar.gz && \
-    tar zxf cmake-3.8.0.tar.gz &&                                  \
-    cd cmake-3.8.0 &&                                              \
+    wget --no-check-certificate https://cmake.org/files/v3.9/cmake-3.9.6.tar.gz && \
+    tar zxf cmake-3.9.6.tar.gz &&                                  \
+    cd cmake-3.9.6 &&                                              \
     ./bootstrap  --parallel=2 --prefix=/usr &&                     \
     make -j2 &&                                                    \
     make install > /dev/null &&                                    \
@@ -77,9 +78,9 @@ RUN mkdir /build &&                                                \
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
-    wget https://github.com/google/protobuf/releases/download/v3.2.0/protobuf-cpp-3.2.0.tar.gz && \
-    tar zxf protobuf-cpp-3.2.0.tar.gz &&                           \
-    cd protobuf-3.2.0 &&                                           \
+    wget https://github.com/google/protobuf/releases/download/v3.5.0/protobuf-cpp-3.5.0.tar.gz && \
+    tar zxf protobuf-cpp-3.5.0.tar.gz &&                           \
+    cd protobuf-3.5.0 &&                                           \
     ./configure --prefix=/usr &&                                   \
     make -j2 &&                                                    \
     make install > /dev/null &&                                    \
@@ -88,9 +89,9 @@ RUN mkdir /build &&                                                \
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
-    wget http://geant4.cern.ch/support/source/geant4.10.03.p01.tar.gz && \
-    tar zxf geant4.10.03.p01.tar.gz &&                                 \
-    cd geant4.10.03.p01 &&                                             \
+    wget http://geant4.cern.ch/support/source/geant4.10.04.tar.gz && \
+    tar zxf geant4.10.04.tar.gz &&                                 \
+    cd geant4.10.04 &&                                             \
     mkdir mybuild &&                                               \
     cd mybuild &&                                                  \
     cmake -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DGEANT4_INSTALL_DATA=ON .. && \
