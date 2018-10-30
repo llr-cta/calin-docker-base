@@ -129,6 +129,8 @@ ENV G4ABLADATA=$G4DATADIR/G4ABLA3.1                                \
     G4RADIOACTIVEDATA=$G4DATADIR/RadioactiveDecay5.2               \
     G4REALSURFACEDATA=$G4DATADIR/RealSurface2.1.1
 
+RUN mkdir /data
+
 # Now build CamerasToACTL manually with :
 #   docker run -t -i xxxxxxxxxxxx /bin/bash /build/build_cameras_to_actl.sh
 # And then commit it :
