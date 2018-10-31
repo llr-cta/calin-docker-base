@@ -18,13 +18,11 @@
 
 # Build version : ubuntu16.04_v1.16
 
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 MAINTAINER sfegan@llr.in2p3.fr
 
 RUN apt-get update -y && apt-get install -y                        \
-        gcc-5                                                      \
-        g++-5                                                      \
         make                                                       \
         git                                                        \
         wget                                                       \
@@ -37,22 +35,19 @@ RUN apt-get update -y && apt-get install -y                        \
         libz-dev                                                   \
         python3                                                    \
         python3-dev                                                \
-        python3-numpy                                              \
-        python3-scipy                                              \
         python3-pip                                                \
-        python3-matplotlib                                         \
         fftw3                                                      \
         sqlite3                                                    \
         libsqlite3-dev                                             \
         libxerces-c-dev                                            \
         vim
 
-ENV CC=gcc-5 CXX=g++-5
+#ENV CC=gcc CXX=g++
 
-RUN pip3 install jupyter
+RUN pip3 install numpy scipy matplotlib jupyter
 
 # Pre-run annoying step to build font cache
-RUN echo %pylab | ipython3
+RUN echo "import matplotlib.font_manager ; matplotlib.font_manager._rebuild()" | ipython3
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
@@ -94,7 +89,7 @@ RUN mkdir /build &&                                                \
     cd geant4.10.04.p02 &&                                          \
     mkdir mybuild &&                                               \
     cd mybuild &&                                                  \
-    cmake -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DGEANT4_INSTALL_DATA=ON .. && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DGEANT4_INSTALL_DATA=ON .. && \ # -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX
     make -j2 &&                                                    \
     make install > /dev/null &&                                    \
     cd / &&                                                        \
@@ -134,6 +129,6 @@ RUN mkdir /data
 # Now build CamerasToACTL manually with :
 #   docker run -t -i xxxxxxxxxxxx /bin/bash /build/build_cameras_to_actl.sh
 # And then commit it :
-#   docker commit -c 'CMD ["/bin/bash"]' xxxxxxxxxxxx llrcta/calin-docker-base:ubuntu16.04_vX.XX
+#   docker commit -c 'CMD ["/bin/bash"]' xxxxxxxxxxxx llrcta/calin-docker-base:ubuntu18.04_vX.XX
 
 CMD ["/bin/bash"]
