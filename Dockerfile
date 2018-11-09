@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Build version : ubuntu16.04_v1.16
+# Build version : ubuntu18.04_v1.18
 
 FROM ubuntu:18.04
 
@@ -89,7 +89,7 @@ RUN mkdir /build &&                                                \
     cd geant4.10.04.p02 &&                                          \
     mkdir mybuild &&                                               \
     cd mybuild &&                                                  \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DGEANT4_INSTALL_DATA=ON .. && \ # -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DGEANT4_INSTALL_DATA=ON .. && \
     make -j2 &&                                                    \
     make install > /dev/null &&                                    \
     cd / &&                                                        \
@@ -101,10 +101,9 @@ RUN ipython3 profile create default &&                             \
     jupyter notebook --allow-root --generate-config &&             \
     jupyter nbextension enable --py --sys-prefix widgetsnbextension && \
     sed -i -e '/c.NotebookApp.ip/s/^#//'                           \
-           -e '/c.NotebookApp.ip/s/localhost/*/'                   \
+           -e '/c.NotebookApp.ip/s/localhost/0.0.0.0/'                   \
            -e '/c.NotebookApp.open_browser/s/^#//'                 \
            -e '/c.NotebookApp.open_browser/s/True/False/'          \
-           -e '/c.NotebookApp.ip/s/localhost/*/'                   \
            -e '/c.NotebookApp.token/s/^#//'                        \
            -e '/c.NotebookApp.token/s/<generated>//'               \
            -e '/c.NotebookApp.allow_root/s/^#//'                   \
@@ -123,6 +122,8 @@ ENV G4ABLADATA=$G4DATADIR/G4ABLA3.1                                \
     G4LEVELGAMMADATA=$G4DATADIR/PhotonEvaporation5.2               \
     G4RADIOACTIVEDATA=$G4DATADIR/RadioactiveDecay5.2               \
     G4REALSURFACEDATA=$G4DATADIR/RealSurface2.1.1
+
+RUN pip3 install ipyparallel
 
 RUN mkdir /data
 
