@@ -16,9 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Build version : ubuntu18.04_v1.18
+# Build version : ubuntu18.04_v1.19
 
-FROM ubuntu:18.04
+# docker build . --build-arg camerastoactl_password=XXXX --tag llrcta/calin-docker-base:ubuntu18.04_v1.19
+
+FROM ubuntu:18.04 as intermediate
 
 MAINTAINER sfegan@llr.in2p3.fr
 
@@ -95,8 +97,6 @@ RUN mkdir /build &&                                                \
     cd / &&                                                        \
     rm -rf /build
 
-ADD build_cameras_to_actl.sh /build/
-
 RUN ipython3 profile create default &&                             \
     jupyter notebook --allow-root --generate-config &&             \
     jupyter nbextension enable --py --sys-prefix widgetsnbextension && \
@@ -127,9 +127,22 @@ RUN pip3 install ipyparallel
 
 RUN mkdir /data
 
-# Now build CamerasToACTL manually with :
-#   docker run -t -i xxxxxxxxxxxx /bin/bash /build/build_cameras_to_actl.sh
-# And then commit it :
-#   docker commit -c 'CMD ["/bin/bash"]' xxxxxxxxxxxx llrcta/calin-docker-base:ubuntu18.04_vX.XX
+ARG camerastoactl_password
+
+RUN mkdir /build &&                                                \
+    cd /build &&                                                   \
+    git clone https://sfegan:${camerastoactl_password}@github.com/llr-cta/CamerasToACTL.git && \
+    cd CamerasToACTL &&                                            \
+    mkdir mybuild &&                                               \
+    cd mybuild &&                                                  \
+    cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release .. && \
+    make -j2 &&                                                    \
+    make install > /dev/null &&                                    \
+    cd / &&                                                        \
+    rm -rf /build
+
+FROM ubuntu:18.04
+
+COPY --from=intermediate / /
 
 CMD ["/bin/bash"]
