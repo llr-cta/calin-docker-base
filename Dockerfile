@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Build version : ubuntu18.04_v1.19
+# Build version : ubuntu18.04_v1.20
 
 # docker build . --build-arg camerastoactl_password=XXXX --tag llrcta/calin-docker-base:ubuntu18.04_v1.19
 
@@ -110,19 +110,6 @@ RUN ipython3 profile create default &&                             \
            -e '/c.NotebookApp.allow_root/s/False/True/'            \
        /root/.jupyter/jupyter_notebook_config.py
 
-# Add Geant 4 environment variables
-ENV G4DATADIR=/usr/share/Geant4-10.4.2/data
-ENV G4ABLADATA=$G4DATADIR/G4ABLA3.1                                \
-    G4LEDATA=$G4DATADIR/G4EMLOW7.3                                 \
-    G4ENSDFSTATEDATA=$G4DATADIR/G4ENSDFSTATE2.2                    \
-    G4NEUTRONHPDATA=$G4DATADIR/G4NDL4.5                            \
-    G4NEUTRONXSDATA=$G4DATADIR/G4NEUTRONXS1.4                      \
-    G4PIIDATA=$G4DATADIR/G4PII1.3                                  \
-    G4SAIDXSDATA=$G4DATADIR/G4SAIDDATA1.1                          \
-    G4LEVELGAMMADATA=$G4DATADIR/PhotonEvaporation5.2               \
-    G4RADIOACTIVEDATA=$G4DATADIR/RadioactiveDecay5.2               \
-    G4REALSURFACEDATA=$G4DATADIR/RealSurface2.1.1
-
 RUN pip3 install ipyparallel
 
 RUN mkdir /data
@@ -144,5 +131,18 @@ RUN mkdir /build &&                                                \
 FROM ubuntu:18.04
 
 COPY --from=intermediate / /
+
+# Add Geant 4 environment variables
+ENV G4DATADIR=/usr/share/Geant4-10.4.2/data
+ENV G4ABLADATA=$G4DATADIR/G4ABLA3.1                                \
+    G4LEDATA=$G4DATADIR/G4EMLOW7.3                                 \
+    G4ENSDFSTATEDATA=$G4DATADIR/G4ENSDFSTATE2.2                    \
+    G4NEUTRONHPDATA=$G4DATADIR/G4NDL4.5                            \
+    G4NEUTRONXSDATA=$G4DATADIR/G4NEUTRONXS1.4                      \
+    G4PIIDATA=$G4DATADIR/G4PII1.3                                  \
+    G4SAIDXSDATA=$G4DATADIR/G4SAIDDATA1.1                          \
+    G4LEVELGAMMADATA=$G4DATADIR/PhotonEvaporation5.2               \
+    G4RADIOACTIVEDATA=$G4DATADIR/RadioactiveDecay5.2               \
+    G4REALSURFACEDATA=$G4DATADIR/RealSurface2.1.1
 
 CMD ["/bin/bash"]
