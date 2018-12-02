@@ -114,24 +114,6 @@ RUN pip3 install ipyparallel
 
 RUN mkdir /data
 
-ARG camerastoactl_password
-
-RUN mkdir /build &&                                                \
-    cd /build &&                                                   \
-    git clone https://sfegan:${camerastoactl_password}@github.com/llr-cta/CamerasToACTL.git && \
-    cd CamerasToACTL &&                                            \
-    mkdir mybuild &&                                               \
-    cd mybuild &&                                                  \
-    cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release .. && \
-    make -j2 &&                                                    \
-    make install > /dev/null &&                                    \
-    cd / &&                                                        \
-    rm -rf /build
-
-FROM ubuntu:18.04
-
-COPY --from=intermediate / /
-
 # Add Geant 4 environment variables
 ENV G4DATADIR=/usr/share/Geant4-10.4.2/data
 ENV G4ABLADATA=$G4DATADIR/G4ABLA3.1                                \
@@ -144,5 +126,30 @@ ENV G4ABLADATA=$G4DATADIR/G4ABLA3.1                                \
     G4LEVELGAMMADATA=$G4DATADIR/PhotonEvaporation5.2               \
     G4RADIOACTIVEDATA=$G4DATADIR/RadioactiveDecay5.2               \
     G4REALSURFACEDATA=$G4DATADIR/RealSurface2.1.1
+
+# Limit OMP threads to one - otherwise FFTs go crazy
+ENV OMP_NUM_THREADS=1
+
+FROM intermediate as camerastoactl_download
+
+ARG camerastoactl_password
+
+RUN mkdir /build &&                                                \
+    cd /build &&                                                   \
+    git clone https://sfegan:${camerastoactl_password}@github.com/llr-cta/CamerasToACTL.git
+
+FROM intermediate
+
+COPY --from=camerastoactl_download /build /build
+
+RUN cd /build &&                                                   \
+    cd CamerasToACTL &&                                            \
+    mkdir mybuild &&                                               \
+    cd mybuild &&                                                  \
+    cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release .. && \
+    make -j2 &&                                                    \
+    make install > /dev/null &&                                    \
+    cd / &&                                                        \
+    rm -rf /build
 
 CMD ["/bin/bash"]
