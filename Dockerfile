@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Build version : ubuntu18.04_v1.20
+# Build version : ubuntu18.04_v1.22
 
 # docker build . --build-arg camerastoactl_password=XXXX --tag llrcta/calin-docker-base:ubuntu18.04_v1.19
 
@@ -151,5 +151,8 @@ RUN cd /build &&                                                   \
     make install > /dev/null &&                                    \
     cd / &&                                                        \
     rm -rf /build
+
+# Set default to bash so that Jupyter uses it for new terminals
+ENV SHELL=/bin/bash
 
 CMD ["/bin/bash"]
