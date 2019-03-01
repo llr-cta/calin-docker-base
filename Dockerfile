@@ -87,7 +87,7 @@ RUN mkdir /build &&                                                \
     cd / &&                                                        \
     rm -rf /build
 
-ENV G4DATADIR=/usr/share/Geant4.10.5/data
+ENV G4DATADIR=/usr/share/Geant4-10.5.0/data
 
 RUN G4URL=https://geant4-data.web.cern.ch/geant4-data/datasets &&  \
     mkdir -p $G4DATADIR &&                                         \
