@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Build version : ubuntu18.04_v1.22
+# Build version : ubuntu18.04_v1.24
 
 # docker build . --build-arg camerastoactl_password=XXXX --tag llrcta/calin-docker-base:ubuntu18.04_v1.19
 
@@ -42,7 +42,10 @@ RUN apt-get update -y && apt-get install -y                        \
         sqlite3                                                    \
         libsqlite3-dev                                             \
         libxerces-c-dev                                            \
-        vim
+        vim                                                        \
+        curl                                                       \
+        libcurl4                                                   \
+        libcurl4-openssl-dev
 
 #ENV CC=gcc CXX=g++
 
@@ -53,9 +56,9 @@ RUN echo "import matplotlib.font_manager ; matplotlib.font_manager._rebuild()" |
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
-    wget --no-check-certificate https://cmake.org/files/v3.12/cmake-3.12.3.tar.gz && \
-    tar zxf cmake-3.12.3.tar.gz &&                                 \
-    cd cmake-3.12.3 &&                                             \
+    wget --no-check-certificate https://github.com/Kitware/CMake/releases/download/v3.13.4/cmake-3.13.4.tar.gz && \
+    tar zxf cmake-3.13.4.tar.gz &&                                 \
+    cd cmake-3.13.4 &&                                             \
     ./bootstrap  --parallel=2 --prefix=/usr &&                     \
     make -j2 &&                                                    \
     make install > /dev/null &&                                    \
@@ -84,14 +87,31 @@ RUN mkdir /build &&                                                \
     cd / &&                                                        \
     rm -rf /build
 
+ENV G4DATADIR=/usr/share/Geant4.10.5/data
+
+RUN G4URL=https://geant4-data.web.cern.ch/geant4-data/datasets &&  \
+    mkdir -p $G4DATADIR &&                                         \
+    curl $G4URL/G4NDL.4.5.tar.gz | tar -C $G4DATADIR -zxf - &&     \
+    curl $G4URL/G4EMLOW.7.7.tar.gz | tar -C $G4DATADIR -zxf - &&   \
+    curl $G4URL/G4PhotonEvaporation.5.3.tar.gz | tar -C $G4DATADIR -zxf - &&\
+    curl $G4URL/G4RadioactiveDecay.5.3.tar.gz | tar -C $G4DATADIR -zxf - && \
+    curl $G4URL/G4SAIDDATA.2.0.tar.gz | tar -C $G4DATADIR -zxf - && \
+    curl $G4URL/G4PARTICLEXS.1.1.tar.gz | tar -C $G4DATADIR -zxf - && \
+    curl $G4URL/G4ABLA.3.1.tar.gz | tar -C $G4DATADIR -zxf - &&    \
+    curl $G4URL/G4INCL.1.0.tar.gz | tar -C $G4DATADIR -zxf - &&    \
+    curl $G4URL/G4PII.1.3.tar.gz | tar -C $G4DATADIR -zxf - &&     \
+    curl $G4URL/G4ENSDFSTATE.2.2.tar.gz | tar -C $G4DATADIR -zxf - && \
+    curl $G4URL/G4RealSurface.2.1.1.tar.gz | tar -C $G4DATADIR -zxf - && \
+    curl $G4URL/G4TENDL.1.3.2.tar.gz | tar -C $G4DATADIR -zxf -
+
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
-    wget http://geant4.cern.ch/support/source/geant4.10.04.p02.tar.gz && \
-    tar zxf geant4.10.04.p02.tar.gz &&                              \
-    cd geant4.10.04.p02 &&                                          \
+    wget http://geant4.cern.ch/support/source/geant4.10.05.tar.gz && \
+    tar zxf geant4.10.05.tar.gz &&                                 \
+    cd geant4.10.05 &&                                             \
     mkdir mybuild &&                                               \
     cd mybuild &&                                                  \
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DGEANT4_INSTALL_DATA=ON .. && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr .. && \
     make -j2 &&                                                    \
     make install > /dev/null &&                                    \
     cd / &&                                                        \
@@ -101,7 +121,7 @@ RUN ipython3 profile create default &&                             \
     jupyter notebook --allow-root --generate-config &&             \
     jupyter nbextension enable --py --sys-prefix widgetsnbextension && \
     sed -i -e '/c.NotebookApp.ip/s/^#//'                           \
-           -e '/c.NotebookApp.ip/s/localhost/0.0.0.0/'                   \
+           -e '/c.NotebookApp.ip/s/localhost/0.0.0.0/'             \
            -e '/c.NotebookApp.open_browser/s/^#//'                 \
            -e '/c.NotebookApp.open_browser/s/True/False/'          \
            -e '/c.NotebookApp.token/s/^#//'                        \
@@ -115,17 +135,18 @@ RUN pip3 install ipyparallel
 RUN mkdir /data
 
 # Add Geant 4 environment variables
-ENV G4DATADIR=/usr/share/Geant4-10.4.2/data
-ENV G4ABLADATA=$G4DATADIR/G4ABLA3.1                                \
-    G4LEDATA=$G4DATADIR/G4EMLOW7.3                                 \
-    G4ENSDFSTATEDATA=$G4DATADIR/G4ENSDFSTATE2.2                    \
-    G4NEUTRONHPDATA=$G4DATADIR/G4NDL4.5                            \
-    G4NEUTRONXSDATA=$G4DATADIR/G4NEUTRONXS1.4                      \
-    G4PIIDATA=$G4DATADIR/G4PII1.3                                  \
-    G4SAIDXSDATA=$G4DATADIR/G4SAIDDATA1.1                          \
-    G4LEVELGAMMADATA=$G4DATADIR/PhotonEvaporation5.2               \
-    G4RADIOACTIVEDATA=$G4DATADIR/RadioactiveDecay5.2               \
-    G4REALSURFACEDATA=$G4DATADIR/RealSurface2.1.1
+ENV G4NEUTRONHPDATA="$G4DATADIR/G4NDL4.5"                          \
+    G4LEDATA="$G4DATADIR/G4EMLOW7.7"                               \
+    G4LEVELGAMMADATA="$G4DATADIR/PhotonEvaporation5.3"             \
+    G4RADIOACTIVEDATA="$G4DATADIR/RadioactiveDecay5.3"             \
+    G4SAIDXSDATA="$G4DATADIR/G4SAIDDATA2.0"                        \
+    G4PARTICLEXSDATA="$G4DATADIR/G4PARTICLEXS1.0"                  \
+    G4ABLADATA="$G4DATADIR/G4ABLA3.1"                              \
+    G4INCLDATA="$G4DATADIR/G4INCL1.0"                              \
+    G4PIIDATA="$G4DATADIR/G4PII1.3"                                \
+    G4ENSDFSTATEDATA="$G4DATADIR/G4ENSDFSTATE2.2"                  \
+    G4REALSURFACEDATA="$G4DATADIR/RealSurface2.1.1"                \
+    G4TENDL="$G4DATADIR/G4TENDL1.3.2"
 
 # Limit OMP threads to one - otherwise FFTs go crazy
 ENV OMP_NUM_THREADS=1
@@ -136,7 +157,9 @@ ARG camerastoactl_password
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
-    git clone https://sfegan:${camerastoactl_password}@github.com/llr-cta/CamerasToACTL.git
+    git clone https://sfegan:${camerastoactl_password}@github.com/llr-cta/CamerasToACTL.git && \
+    cd CamerasToACTL &&                                            \
+    git checkout 5f3d428
 
 FROM intermediate
 
