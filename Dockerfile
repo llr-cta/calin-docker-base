@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Build version : ubuntu18.04_v1.24
+# Build version : ubuntu18.04_v1.25
 
 # docker build . --build-arg camerastoactl_password=XXXX --tag llrcta/calin-docker-base:ubuntu18.04_v1.19
 
@@ -140,7 +140,7 @@ ENV G4NEUTRONHPDATA="$G4DATADIR/G4NDL4.5"                          \
     G4LEVELGAMMADATA="$G4DATADIR/PhotonEvaporation5.3"             \
     G4RADIOACTIVEDATA="$G4DATADIR/RadioactiveDecay5.3"             \
     G4SAIDXSDATA="$G4DATADIR/G4SAIDDATA2.0"                        \
-    G4PARTICLEXSDATA="$G4DATADIR/G4PARTICLEXS1.0"                  \
+    G4PARTICLEXSDATA="$G4DATADIR/G4PARTICLEXS1.1"                  \
     G4ABLADATA="$G4DATADIR/G4ABLA3.1"                              \
     G4INCLDATA="$G4DATADIR/G4INCL1.0"                              \
     G4PIIDATA="$G4DATADIR/G4PII1.3"                                \
