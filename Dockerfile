@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Build version : ubuntu18.04_v1.25
+# Build version : ubuntu18.04_v1.26
 
 # docker build . --build-arg camerastoactl_password=XXXX --tag llrcta/calin-docker-base:ubuntu18.04_v1.19
 
@@ -131,6 +131,26 @@ RUN ipython3 profile create default &&                             \
        /root/.jupyter/jupyter_notebook_config.py
 
 RUN pip3 install ipyparallel
+
+RUN apt-get install -y                                             \
+        libgeos-dev libgeos++-dev                                  \
+        libhdf5-dev hdf5-tools libjpeg-dev                         \
+        libnetcdf-dev netcdf-bin netcdf-doc
+
+RUN pip3 install https://github.com/matplotlib/basemap/archive/v1.1.0.tar.gz
+
+RUN mkdir /build &&                                                \
+    cd /build &&                                                   \
+    wget https://confluence.ecmwf.int/download/attachments/45757960/eccodes-2.12.0-Source.tar.gz && \
+    tar zxf eccodes-2.12.0-Source.tar.gz &&                        \
+    cd eccodes-2.12.0-Source &&                                    \
+    mkdir build &&                                                 \
+    cd build &&                                                    \
+    cmake -DENABLE_FORTRAN=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
+    make -j2 &&                                                    \
+    make install > /dev/null &&                                    \
+    cd / &&                                                        \
+    rm -rf /build
 
 RUN mkdir /data
 
