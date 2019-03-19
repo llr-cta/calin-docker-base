@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Build version : ubuntu18.04_v1.26
+# Build version : ubuntu18.04_v1.27
 
 # docker build . --build-arg camerastoactl_password=XXXX --tag llrcta/calin-docker-base:ubuntu18.04_v1.19
 
@@ -130,14 +130,15 @@ RUN ipython3 profile create default &&                             \
            -e '/c.NotebookApp.allow_root/s/False/True/'            \
        /root/.jupyter/jupyter_notebook_config.py
 
-RUN pip3 install ipyparallel
-
 RUN apt-get install -y                                             \
         libgeos-dev libgeos++-dev                                  \
         libhdf5-dev hdf5-tools libjpeg-dev                         \
-        libnetcdf-dev netcdf-bin netcdf-doc
+        libnetcdf-dev netcdf-bin netcdf-doc                        \
+        proj-bin libproj-dev
 
-RUN pip3 install https://github.com/matplotlib/basemap/archive/v1.1.0.tar.gz
+RUN pip3 install ipyparallel cython
+
+RUN pip3 install https://github.com/SciTools/cartopy/archive/v0.17.0.tar.gz
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
