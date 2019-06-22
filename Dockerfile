@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Build version : ubuntu18.04_v1.31
+# Build version : ubuntu18.04_v1.32
 
 # docker build . --build-arg camerastoactl_password=XXXX --tag llrcta/calin-docker-base:ubuntu18.04_v1.19
 
@@ -206,5 +206,7 @@ RUN apt-get update -y && apt-get install -y                        \
         ffmpeg
 
 RUN pip3 install cdsapi ecmwf-api-client
+
+RUN pip3 install astropy
 
 CMD ["/bin/bash"]
