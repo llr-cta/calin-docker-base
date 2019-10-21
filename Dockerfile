@@ -46,11 +46,27 @@ RUN apt-get update -y && apt-get install -y                        \
         curl                                                       \
         libcurl4                                                   \
         libcurl4-openssl-dev                                       \
-        zstd
+        ffmpeg                                                     \
+        libgeos-dev                                                \
+        libgeos++-dev                                              \
+        libhdf5-dev                                                \
+        hdf5-tools                                                 \
+        libjpeg-dev                                                \
+        libnetcdf-dev                                              \
+        netcdf-bin                                                 \
+        netcdf-doc                                                 \
+        proj-bin                                                   \
+        libproj-dev                                                \
+        libopenjp2-7                                               \
+        libopenjp2-7-dev                                           \
+        libopenjp2-tools                                           \
+        zstd                                                       \
+        libzstd-dev
 
 #ENV CC=gcc CXX=g++
 
-RUN pip3 install numpy scipy matplotlib jupyter
+RUN pip3 install numpy scipy matplotlib jupyter ipyparallel cython \
+        cdsapi ecmwf-api-client
 
 # Pre-run annoying step to build font cache
 RUN echo "import matplotlib.font_manager ; matplotlib.font_manager._rebuild()" | ipython3
@@ -88,7 +104,7 @@ RUN mkdir /build &&                                                \
     cd / &&                                                        \
     rm -rf /build
 
-ENV G4DATADIR=/usr/share/Geant4-10.5.0/data
+ENV G4DATADIR=/usr/share/Geant4-10.5.1/data
 
 RUN G4URL=https://geant4-data.web.cern.ch/geant4-data/datasets &&  \
     mkdir -p $G4DATADIR &&                                         \
@@ -131,18 +147,7 @@ RUN ipython3 profile create default &&                             \
            -e '/c.NotebookApp.allow_root/s/False/True/'            \
        /root/.jupyter/jupyter_notebook_config.py
 
-RUN apt-get install -y                                             \
-        libgeos-dev libgeos++-dev                                  \
-        libhdf5-dev hdf5-tools libjpeg-dev                         \
-        libnetcdf-dev netcdf-bin netcdf-doc                        \
-        proj-bin libproj-dev
-
-RUN pip3 install ipyparallel cython
-
 RUN pip3 install https://github.com/SciTools/cartopy/archive/v0.17.0.tar.gz
-
-RUN apt-get update -y && apt-get install -y                        \
-        libopenjp2-7 libopenjp2-7-dev libopenjp2-tools
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
@@ -188,9 +193,6 @@ RUN mkdir /build &&                                                \
 
 FROM intermediate
 
-RUN apt-get update -y && apt-get install -y                        \
-        libzstd-dev
-
 COPY --from=camerastoactl_download /build /build
 
 RUN cd /build &&                                                   \
@@ -205,12 +207,5 @@ RUN cd /build &&                                                   \
 
 # Set default to bash so that Jupyter uses it for new terminals
 ENV SHELL=/bin/bash
-
-RUN apt-get update -y && apt-get install -y                        \
-        ffmpeg
-
-RUN pip3 install cdsapi ecmwf-api-client
-
-RUN pip3 install astropy
 
 CMD ["/bin/bash"]
