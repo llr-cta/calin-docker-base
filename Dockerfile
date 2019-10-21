@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Build version : ubuntu18.04_v1.32
+# Build version : ubuntu18.04_v1.33
 
 # docker build . --build-arg camerastoactl_password=XXXX --tag llrcta/calin-docker-base:ubuntu18.04_v1.19
 
@@ -45,7 +45,8 @@ RUN apt-get update -y && apt-get install -y                        \
         vim                                                        \
         curl                                                       \
         libcurl4                                                   \
-        libcurl4-openssl-dev
+        libcurl4-openssl-dev                                       \
+        zstd
 
 #ENV CC=gcc CXX=g++
 
@@ -56,9 +57,9 @@ RUN echo "import matplotlib.font_manager ; matplotlib.font_manager._rebuild()" |
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
-    wget --no-check-certificate https://github.com/Kitware/CMake/releases/download/v3.13.4/cmake-3.13.4.tar.gz && \
-    tar zxf cmake-3.13.4.tar.gz &&                                 \
-    cd cmake-3.13.4 &&                                             \
+    wget --no-check-certificate https://github.com/Kitware/CMake/releases/download/v3.15.4/cmake-3.15.4.tar.gz && \
+    tar zxf cmake-3.15.4.tar.gz &&                                 \
+    cd cmake-3.15.4 &&                                             \
     ./bootstrap  --parallel=2 --prefix=/usr &&                     \
     make -j2 &&                                                    \
     make install > /dev/null &&                                    \
@@ -78,9 +79,9 @@ RUN mkdir /build &&                                                \
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
-    wget https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protobuf-cpp-3.6.1.tar.gz && \
-    tar zxf protobuf-cpp-3.6.1.tar.gz &&                           \
-    cd protobuf-3.6.1 &&                                           \
+    wget https://github.com/protocolbuffers/protobuf/releases/download/v3.10.0/protobuf-cpp-3.10.0.tar.gz && \
+    tar zxf protobuf-cpp-3.10.0.tar.gz &&                          \
+    cd protobuf-3.10.0 &&                                          \
     ./configure --prefix=/usr &&                                   \
     make -j2 &&                                                    \
     make install > /dev/null &&                                    \
@@ -106,9 +107,9 @@ RUN G4URL=https://geant4-data.web.cern.ch/geant4-data/datasets &&  \
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
-    wget http://geant4.cern.ch/support/source/geant4.10.05.tar.gz && \
-    tar zxf geant4.10.05.tar.gz &&                                 \
-    cd geant4.10.05 &&                                             \
+    wget http://geant4.cern.ch/support/source/geant4.10.05.p01.tar.gz && \
+    tar zxf geant4.10.05.p01.tar.gz &&                             \
+    cd geant4.10.05.p01 &&                                         \
     mkdir mybuild &&                                               \
     cd mybuild &&                                                  \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr .. && \
@@ -145,9 +146,9 @@ RUN apt-get update -y && apt-get install -y                        \
 
 RUN mkdir /build &&                                                \
     cd /build &&                                                   \
-    wget https://confluence.ecmwf.int/download/attachments/45757960/eccodes-2.12.0-Source.tar.gz && \
-    tar zxf eccodes-2.12.0-Source.tar.gz &&                        \
-    cd eccodes-2.12.0-Source &&                                    \
+    wget https://confluence.ecmwf.int/download/attachments/45757960/eccodes-2.14.1-Source.tar.gz && \
+    tar zxf eccodes-2.14.1-Source.tar.gz &&                        \
+    cd eccodes-2.14.1-Source &&                                    \
     mkdir build &&                                                 \
     cd build &&                                                    \
     cmake -DENABLE_FORTRAN=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
@@ -183,9 +184,12 @@ RUN mkdir /build &&                                                \
     cd /build &&                                                   \
     git clone https://sfegan:${camerastoactl_password}@github.com/llr-cta/CamerasToACTL.git && \
     cd CamerasToACTL &&                                            \
-    git checkout 5f3d428
+    git checkout 2f8a11cb49636dd709b360fa38340c494613bc0a
 
 FROM intermediate
+
+RUN apt-get update -y && apt-get install -y                        \
+        libzstd-dev
 
 COPY --from=camerastoactl_download /build /build
 
