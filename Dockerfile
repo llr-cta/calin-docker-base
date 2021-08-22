@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Build version : ubuntu20.04_v1.34
+# Build version : ubuntu20.04_v1.35
 
 # docker build . --tag llrcta/calin-docker-base:ubuntu20.04_v1.34
 
@@ -40,6 +40,12 @@ RUN apt-get update -y && apt-get install -y                        \
         python3                                                    \
         python3-dev                                                \
         python3-pip                                                \
+        python3-numpy                                              \
+        python3-scipy                                              \
+        python3-matplotlib                                         \
+        cython3                                                    \
+        ipython3                                                   \
+        jupyter-notebook                                           \
         fftw3                                                      \
         sqlite3                                                    \
         libsqlite3-dev                                             \
@@ -73,51 +79,39 @@ RUN apt-get update -y && apt-get install -y                        \
 
 #ENV CC=gcc CXX=g++
 
-RUN pip3 install numpy scipy matplotlib jupyter ipyparallel cython \
-        cdsapi ecmwf-api-client
+RUN pip3 install ipyparallel ipywidgets cdsapi ecmwf-api-client
 
 # Pre-run annoying step to build font cache
-RUN echo "import matplotlib.font_manager ; matplotlib.font_manager._rebuild()" | ipython3
+# RUN echo "import matplotlib.font_manager ; matplotlib.font_manager._rebuild()" | ipython3
 
 ENV G4DATADIR=/usr/share/Geant4-10.7.2/data
 
-# RUN G4URL=https://geant4-data.web.cern.ch/geant4-data/datasets &&  \
-#     mkdir -p $G4DATADIR &&                                         \
-#     curl $G4URL/G4NDL.4.5.tar.gz | tar -C $G4DATADIR -zxf - &&     \
-#     curl $G4URL/G4EMLOW.7.7.tar.gz | tar -C $G4DATADIR -zxf - &&   \
-#     curl $G4URL/G4PhotonEvaporation.5.3.tar.gz | tar -C $G4DATADIR -zxf - &&\
-#     curl $G4URL/G4RadioactiveDecay.5.3.tar.gz | tar -C $G4DATADIR -zxf - && \
-#     curl $G4URL/G4SAIDDATA.2.0.tar.gz | tar -C $G4DATADIR -zxf - && \
-#     curl $G4URL/G4PARTICLEXS.1.1.tar.gz | tar -C $G4DATADIR -zxf - && \
-#     curl $G4URL/G4ABLA.3.1.tar.gz | tar -C $G4DATADIR -zxf - &&    \
-#     curl $G4URL/G4INCL.1.0.tar.gz | tar -C $G4DATADIR -zxf - &&    \
-#     curl $G4URL/G4PII.1.3.tar.gz | tar -C $G4DATADIR -zxf - &&     \
-#     curl $G4URL/G4ENSDFSTATE.2.2.tar.gz | tar -C $G4DATADIR -zxf - && \
-#     curl $G4URL/G4RealSurface.2.1.1.tar.gz | tar -C $G4DATADIR -zxf - && \
-#     curl $G4URL/G4TENDL.1.3.2.tar.gz | tar -C $G4DATADIR -zxf -
+RUN G4URL=http://geant4-data.web.cern.ch/datasets &&                          \
+    mkdir -p $G4DATADIR &&                                                    \
+    curl -L $G4URL/G4NDL.4.6.tar.gz | tar -C $G4DATADIR -zxf - &&             \
+    curl -L $G4URL/G4EMLOW.7.13.tar.gz | tar -C $G4DATADIR -zxf - &&          \
+    curl -L $G4URL/G4PhotonEvaporation.5.7.tar.gz | tar -C $G4DATADIR -zxf - &&\
+    curl -L $G4URL/G4RadioactiveDecay.5.6.tar.gz | tar -C $G4DATADIR -zxf - && \
+    curl -L $G4URL/G4SAIDDATA.2.0.tar.gz | tar -C $G4DATADIR -zxf - &&        \
+    curl -L $G4URL/G4PARTICLEXS.3.1.1.tar.gz | tar -C $G4DATADIR -zxf - &&    \
+    curl -L $G4URL/G4ABLA.3.1.tar.gz | tar -C $G4DATADIR -zxf - &&            \
+    curl -L $G4URL/G4INCL.1.0.tar.gz | tar -C $G4DATADIR -zxf - &&            \
+    curl -L $G4URL/G4PII.1.3.tar.gz | tar -C $G4DATADIR -zxf - &&             \
+    curl -L $G4URL/G4ENSDFSTATE.2.3.tar.gz | tar -C $G4DATADIR -zxf - &&      \
+    curl -L $G4URL/G4RealSurface.2.2.tar.gz | tar -C $G4DATADIR -zxf - &&     \
+    curl -L $G4URL/G4TENDL.1.3.2.tar.gz | tar -C $G4DATADIR -zxf -
 
-RUN mkdir /build &&                                                \
-    cd /build &&                                                   \
-    wget https://github.com/Geant4/geant4/archive/refs/tags/v10.7.2.tar.gz && \
-    tar zxf v10.7.2.tar.gz &&                                      \
-    cd geant4-10.7.2 &&                                            \
-    mkdir mybuild &&                                               \
-    cd mybuild &&                                                  \
-    cmake -DCMAKE_BUILD_TYPE=Release -DGEANT4_INSTALL_DATA=ON -DCMAKE_INSTALL_PREFIX=/usr .. && \
-    make -j2 &&                                                    \
-    make install > /dev/null &&                                    \
-    cd / &&                                                        \
-    rm -rf /build
+RUN curl -L https://github.com/llr-cta/Geant4Build/releases/download/ubuntu-20.04-10.7.2/Geant4-ubuntu-20.04-10.7.2.tbz2 | tar -jxf - -C /
 
 RUN ipython3 profile create default &&                             \
     jupyter notebook --allow-root --generate-config &&             \
     jupyter nbextension enable --py --sys-prefix widgetsnbextension && \
     sed -i -e '/c.NotebookApp.ip/s/^#//'                           \
-           -e '/c.NotebookApp.ip/s/localhost/0.0.0.0/'             \
+           -e '/c.NotebookApp.ip/s/localhost/*/'                   \
+           -e '/c.NotebookApp.allow_origin =/s/^#//'                 \
+           -e "/c.NotebookApp.allow_origin =/s/''/'*'/"              \
            -e '/c.NotebookApp.open_browser/s/^#//'                 \
            -e '/c.NotebookApp.open_browser/s/True/False/'          \
-           -e '/c.NotebookApp.token/s/^#//'                        \
-           -e '/c.NotebookApp.token/s/<generated>//'               \
            -e '/c.NotebookApp.allow_root/s/^#//'                   \
            -e '/c.NotebookApp.allow_root/s/False/True/'            \
        /root/.jupyter/jupyter_notebook_config.py
