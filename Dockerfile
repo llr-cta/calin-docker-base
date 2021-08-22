@@ -16,9 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Build version : ubuntu20.04_v1.35
+# Build version : ubuntu20.04_v1.36
 
-# docker build . --tag llrcta/calin-docker-base:ubuntu20.04_v1.35
+# docker build . --tag llrcta/calin-docker-base:ubuntu20.04_v1.36
 
 FROM ubuntu:20.04
 
@@ -105,11 +105,10 @@ RUN curl -L https://github.com/llr-cta/Geant4Build/releases/download/ubuntu-20.0
 
 RUN ipython3 profile create default &&                             \
     jupyter notebook --allow-root --generate-config &&             \
-    jupyter nbextension enable --py --sys-prefix widgetsnbextension && \
     sed -i -e '/c.NotebookApp.ip/s/^#//'                           \
            -e '/c.NotebookApp.ip/s/localhost/*/'                   \
-           -e '/c.NotebookApp.allow_origin =/s/^#//'                 \
-           -e "/c.NotebookApp.allow_origin =/s/''/'*'/"              \
+           -e '/c.NotebookApp.allow_origin =/s/^#//'               \
+           -e "/c.NotebookApp.allow_origin =/s/''/'*'/"            \
            -e '/c.NotebookApp.open_browser/s/^#//'                 \
            -e '/c.NotebookApp.open_browser/s/True/False/'          \
            -e '/c.NotebookApp.allow_root/s/^#//'                   \
@@ -152,6 +151,8 @@ ENV OMP_NUM_THREADS=1
 RUN wget https://github.com/llr-cta/CamerasToACTLRelease/releases/download/latest/CamerasToACTL.tgz && \
     tar zxf CamerasToACTL.tgz -C / &&                              \
     rm -f CamerasToACTL.tgz
+
+RUN pip3 install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
 
 # Set default to bash so that Jupyter uses it for new terminals
 ENV SHELL=/bin/bash
