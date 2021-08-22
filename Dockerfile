@@ -18,7 +18,7 @@
 
 # Build version : ubuntu20.04_v1.35
 
-# docker build . --tag llrcta/calin-docker-base:ubuntu20.04_v1.34
+# docker build . --tag llrcta/calin-docker-base:ubuntu20.04_v1.35
 
 FROM ubuntu:20.04
 
