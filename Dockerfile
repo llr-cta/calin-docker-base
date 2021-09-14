@@ -16,9 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Build version : ubuntu20.04_v1.36
+# Build version : ubuntu20.04_v1.37
 
-# docker build . --tag llrcta/calin-docker-base:ubuntu20.04_v1.36
+# docker build . --tag llrcta/calin-docker-base:ubuntu20.04_v1.37
 
 FROM ubuntu:20.04
 
@@ -28,6 +28,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update -y && apt-get install -y                        \
         cmake                                                      \
+        git                                                        \
         make                                                       \
         wget                                                       \
         gsl-bin                                                    \
